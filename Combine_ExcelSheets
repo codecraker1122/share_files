@@ -1,0 +1,45 @@
+Sub combine_data()
+
+Dim i As Long
+Dim j As Long
+Dim found As Integer
+Dim Data1 As Worksheet
+Dim Data2 As Worksheet
+Dim CombinedData As Worksheet
+Dim tem As String
+Dim lastRow As Long
+
+
+
+Set Data1 = ThisWorkbook.Worksheets("DATA1")
+Set Data2 = ThisWorkbook.Worksheets("DATA2")
+
+
+Sheets.Add.Name = "CombinedData"
+
+Set CombinedData = ThisWorkbook.Worksheets("CombinedData")
+
+For i = 1 To Data1.UsedRange.Columns.Count
+    Data1.Cells(1, i).EntireColumn.Copy
+    
+    CombinedData.Cells(1, i).PasteSpecial Paste:=xlValues
+Next i
+
+For i = 1 To Data2.UsedRange.Columns.Count
+    lastRow = Data2.Cells(1, i).End(xlDown).Row
+    Data2.Range(Data2.Cells(2, i), Data2.Cells(lastRow, i)).Copy
+    found = 0
+    For j = 1 To CombinedData.UsedRange.Columns.Count
+        If Data2.Cells(1, i).Value = CombinedData.Cells(1, j).Value Then
+            CombinedData.Cells(1, j).End(xlDown).Offset(1).PasteSpecial Paste:=xlValues
+            found = 1
+        End If
+    Next j
+    If found = 0 Then
+        CombinedData.Cells(1, 1).End(xlToRight).Offset(0, 1).Value = Data2.Cells(1, i).Value
+        CombinedData.Cells(1, 1).End(xlToRight).Offset(1).PasteSpecial Paste:=xlValues
+    End If
+Next i
+
+
+End Sub
